@@ -45,13 +45,71 @@
 </head>
 <body>
     <h1>Car controls:</h1>
-    <a href="/led.cgi?led=1"><button>FWD</button></a>
-    <a href="/led.cgi?led=2"><button>RVR</button></a>
-    <a href="/led.cgi?led=4"><button>L</button></a>
-    <a href="/led.cgi?led=3"><button>R</button></a>
-    <a href="/led.cgi?led=0"><button>STOP</button></a>
+    <a href="/led.cgi?led=1"><button><b>FWD</b></button></a>
+    <a href="/led.cgi?led=2"><button><b>RVR</b></button></a>
+    <a href="/led.cgi?led=4"><button><b>L</b></button></a>
+    <a href="/led.cgi?led=3"><button><b>R</b></button></a>
+    <a href="/led.cgi?led=0"><button><b>STOP</b></button></a>
     <br><br>
     <a href="/index.shtml">Refresh</a>
-    <p>Use keyboard.: W = Forward, A = Left, D = Right, S = Reverse, Space = Stop, R = Refresh</p>
+    <br><br>
+    <table border="1" cellspacing="0">
+        
+<tr>
+    <td> <b>Keyboard keys</b> </td>
+
+    <td><b>Function</b></td>
+
+</tr>
+
+<tr>
+    
+    <td><b>W</b></td>
+
+    <td><b>Forward</b></td>
+
+</tr>
+
+
+<tr>
+    
+    <td><b>A</b></td>
+
+    <td><b>Left</b></td>
+
+</tr>
+
+<tr>
+    
+    <td><b>D</b></td>
+
+    <td><b>Right</b></td>
+
+</tr>
+
+<tr>
+    
+    <td><b>S</b></td>
+
+    <td><b>Reverse</b></td>
+
+</tr>
+
+<tr>
+    
+    <td><b>Space</b></td>
+
+    <td><b>Stop</b></td>
+
+</tr>
+
+<tr>
+    
+    <td><b>R</b></td>
+
+    <td><b>Refresh</b></td>
+
+</tr>
+    </table>
 </body>
 </html>
