@@ -53,9 +53,19 @@
     <br><br>
     <a href="/index.shtml">Refresh</a>
     <p>Use keyboard.: W = Forward, A = Left, D = Right, S = Reverse, Space = Stop, R = Refresh</p>
+
     <h2>GPS Coordinates</h2>
     <p>Latitude: <!--#lat--></p>
     <p>Longitude: <!--#lon--></p>
+
+    <h2>Set Target Coordinates</h2>
+    <form action="/set_target.cgi" method="get">
+        <label for="lat">Latitude:</label>
+        <input type="text" id="lat" name="lat" required>
+        <label for="lon">Longitude:</label>
+        <input type="text" id="lon" name="lon" required>
+        <button type="submit">Set Target</button>
+    </form>
 
 </body>
 </html>
