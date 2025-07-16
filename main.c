@@ -23,9 +23,33 @@ char gps_buffer[BUF_SIZE];
 
 volatile float current_latitude = 0.0;
 volatile float current_longitude = 0.0;
-    // HOME COORDINATES
+
+
+// Home coordinates (constant)
 const float home_lat = 37.7749;
 const float home_long = -122.4194;
+
+// Target coordinates (modifiable via web, default to home)
+volatile float target_lat = 37.7749;
+volatile float target_long = -122.4194;
+#include <stdlib.h>
+#include <math.h>
+
+// Forward declaration for CGI handler
+const char *cgi_set_target(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]);
+// CGI handler to set target coordinates via web request
+const char *cgi_set_target(int iIndex, int iNumParams, char *pcParam[], char *pcValue[]) {
+    for (int i = 0; i < iNumParams; i++) {
+        if (strcmp(pcParam[i], "lat") == 0) {
+            target_lat = strtof(pcValue[i], NULL);
+        } else if (strcmp(pcParam[i], "lon") == 0) {
+            target_long = strtof(pcValue[i], NULL);
+        }
+    }
+    // Optionally print for debug
+    printf("Target set to: %.6f, %.6f\n", target_lat, target_long);
+    return "/index.shtml"; // Redirect to main page
+}
 
 // MOTOR DRIVER
 
@@ -189,91 +213,3 @@ int main() {
     init_uart();
 
  // printf("GPS Module Initialized (Parsing GPRMC)...\n");
-
-    // MOTOR DRIVER
-    gpio_init(EN_A);
-    gpio_set_dir(EN_A, GPIO_OUT);
-
-    gpio_init(IN_1);
-    gpio_set_dir(IN_1, GPIO_OUT);
-
-    gpio_init(IN_2);
-    gpio_set_dir(IN_2, GPIO_OUT);
-
-    gpio_init(EN_B);
-    gpio_set_dir(EN_B, GPIO_OUT);
-
-    gpio_init(IN_3);
-    gpio_set_dir(IN_3, GPIO_OUT);
-
-    gpio_init(IN_4);
-    gpio_set_dir(IN_4, GPIO_OUT);
-
-    cyw43_arch_init();
-    cyw43_arch_enable_sta_mode();
-
-    // Connect to the WiFi network - loop until connected
-    while (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 30000) != 0) {
-        printf("Attempting to connect...\n");
-    }
-    printf("Connected! \n");
-
-    // Retrieve and print the assigned IP address
-    printf("IP Address: %s\n", ipaddr_ntoa(&netif_default->ip_addr));
-
-    // Initialise web server
-    httpd_init();
-    printf("Http server initialised\n");
-
-    // Configure SSI and CGI handler
-    ssi_init();
-    printf("SSI Handler initialised\n");
-    cgi_init();
-    printf("CGI Handler initialised\n");
-
-
-    // Infinite loop to execute actions based on flags
-    while (1) {
-        // Bearing
-        float homeBearing = calculateBearing(current_latitude, current_longitude, home_lat, home_long);
-      //printf("Bearing to home: %.2f degrees\n", homeBearing);
-        read_gps_data();  // actively read and update current_latitude and current_longitude
-
-        // Convert to integer representation (scaled by 1,000,000)
-        int32_t int_lat = (int32_t)(current_latitude * 1000000);
-        int32_t int_lon = (int32_t)(current_longitude * 1000000);
-
-        int32_t target_lat = (int32_t)(home_lat * 1000000);
-        int32_t target_lon = (int32_t)(home_long * 1000000);
-
-        // Simple threshold check (~3m range)
-        if (abs(int_lat - target_lat) < 300 && abs(int_lon - target_lon) < 300) {
-            stop_flag = true;
-            }
-        
-        if (go_forward_flag) {
-            go_forward();
-            // Remove the flag reset here to keep moving forward continuously
-        } else if (go_back_flag) {
-            go_back();
-            // Remove the flag reset here to keep moving backward continuously
-        } else if (turn_left_flag) {
-            turn_left();
-            // Remove the flag reset here to keep turning left continuously
-        } else if (turn_right_flag) {
-            turn_right();
-            // Remove the flag reset here to keep turning right continuously
-        } else if (stop_flag) {
-            stop();
-            // Do not clear stop_flag here so it keeps stopping continuously
-        }
-
-        // Optionally reset flags when a new command is triggered
-        if (go_forward_flag || go_back_flag || turn_left_flag || turn_right_flag) {
-            stop_flag = false; // Ensure stop is cleared when a new command is triggered
-        }
-
-    }
-
-    return 0; // Should never reach here
-}
